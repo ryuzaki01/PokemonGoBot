@@ -15,6 +15,7 @@ import ink.abb.pogo.scraper.util.Log
 import java.io.BufferedReader
 import java.io.FileOutputStream
 import java.io.FileReader
+import java.io.File
 import java.util.*
 
 class Settings(val properties: Properties) {
@@ -91,6 +92,10 @@ class Settings(val properties: Properties) {
 
     val neverUseBerries = getPropertyIfSet("Never use berries", "never_use_berries", true, String::toBoolean)
 
+    val bulkEvolveCount = getPropertyIfSet("Minimum Pokemon able to Evolve before start Evolving", "bulk_evolve_count", 10, String::toInt)
+
+    val bulkEvolveUseEgg = getPropertyIfSet("Use Lucky Egg Before Start Bulk Evolving", "bulk_evolve_use_egg", false, String::toBoolean)
+
     val allowLeaveStartArea = getPropertyIfSet("Allow leaving the starting area", "allow_leave_start_area", false, String::toBoolean)
 
     val spawnRadius = getPropertyIfSet("Max distance from starting point the bot should ever go", "spawn_radius", -1, String::toInt)
@@ -108,6 +113,16 @@ class Settings(val properties: Properties) {
         getPropertyIfSet("list of pokemon you always want to transfer regardless of CP", "obligatory_transfer", "DODUO,RATTATA,CATERPIE,PIDGEY", String::toString).split(",")
     } else {
         listOf()
+    }
+    val candyRequiredByPokemon = getCandyByPokemon()
+    val autoEvolve = getPropertyIfSet("list of pokemon you want to evolve when able to", "auto_evolve", "CATERPIE,PIDGEY,WEEDLE", String::toString).split(",")
+
+    private fun getCandyByPokemon(): Map<Int, Int> {
+        val lines = File("pokemon-candy.csv").readLines()
+        return lines.map {
+            val split = it.split(",")
+            Pair(split[0].toInt(), split[1].toInt())
+        }.toMap()
     }
 
     val guiPort = getPropertyIfSet("Port where the webserver should listen", "gui_port", 8000, String::toInt)

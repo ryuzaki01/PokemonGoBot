@@ -75,3 +75,6 @@ config.properties
 
 #OS X files
 .DS_Store
+gradle/
+lib/PokeGOAPI-Java/
+
